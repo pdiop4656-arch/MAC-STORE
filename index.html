@@ -816,6 +816,13 @@ rHome();route();
   let n=12;
   setInterval(()=>{n=Math.max(7,Math.min(24,n+Math.floor(Math.random()*5)-2));document.getElementById('liveN').textContent=n;},4000);
 })();
+  <form action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="1584a534-014f-41c7-9798-facba4884f5f">
+  <input type="text" name="name" required>
+  <input type="email" name="email" required>
+  <textarea name="message" required></textarea>
+  <button type="submit">Submit</button>
+</form>
 </script>
 </body>
 </html>
