@@ -393,6 +393,16 @@ footer{background:#0A0A0A;}
   .home-prods{padding-top:32px;}
 }
 .home-prods{scroll-margin-top:70px;}
+.padd.buy{background:var(--g);color:var(--bk);border-color:var(--g);}
+.padd.buy:hover{background:var(--gl);}
+.mbtns{display:flex;gap:8px;margin-bottom:8px;}
+.mbuy{flex:2;background:var(--g);color:var(--bk);border:none;padding:14px 8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.mbuy:hover{background:var(--gl);}
+.mbtns .madd{flex:1;margin:0;background:transparent;color:var(--g);border:var(--bd);padding:14px 8px;font-size:11px;}
+.live{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding:9px 18px;background:rgba(255,255,255,.08);border:var(--bd);font-size:12px;color:var(--wm);letter-spacing:.5px;}
+.live b{color:var(--gl);font-weight:700;}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;animation:lp 2s infinite;flex-shrink:0;}
+@keyframes lp{0%{box-shadow:0 0 0 0 rgba(74,222,128,.6);}70%,100%{box-shadow:0 0 0 8px rgba(74,222,128,0);}}
 </style>
 </head>
 <body>
@@ -455,6 +465,8 @@ footer{background:#0A0A0A;}
     <a class="flink" href="https://instagram.com/macstore221" target="_blank"><i class="ti ti-brand-instagram"></i> @macstore221</a>
   </footer>
 </div>
+
+<div class='pg' id='pg-order'><div class='cpg'><h2 class='ctitle'>Confirmer la commande</h2><div id='ordItems'></div><div id='ordForm' class='cbox' style='margin-top:18px'><h3 style='font-family:Playfair Display,serif;font-size:17px;color:var(--wh);margin-bottom:16px'>Vos informations de livraison</h3><div class='fi'><label class='fl'>Nom complet *</label><input class='finp' id='o-name' autocomplete='name' placeholder='Ex : Amadou Diallo'></div><div class='fi'><label class='fl'>Téléphone / WhatsApp *</label><input class='finp' id='o-tel' type='tel' autocomplete='tel' placeholder='+221 77 000 00 00'></div><div class='fi'><label class='fl'>Ville / Quartier *</label><input class='finp' id='o-city' autocomplete='address-level2' placeholder='Ex : Dakar, Parcelles Assainies'></div><div class='fi'><label class='fl'>Adresse / point de repère</label><textarea class='finp' id='o-addr' placeholder='Rue, immeuble, repère...'></textarea></div><div class='fi'><label class='fl'>Note (optionnel)</label><input class='finp' id='o-note' placeholder='Horaire de livraison, précision...'></div><button class='fsub' onclick='confirmOrder()'><i class='ti ti-brand-whatsapp'></i> Confirmer la commande</button><p style='font-size:11px;color:var(--ws);text-align:center;margin-top:10px'>Votre commande est envoyée sur WhatsApp. Paiement à la réception.</p></div><div id='ordDone' style='display:none;text-align:center;padding:48px 16px'><i class='ti ti-circle-check' style='font-size:52px;color:var(--g);display:block;margin-bottom:14px'></i><h3 class='ctitle' style='margin-bottom:8px'>Merci pour votre commande !</h3><p style='color:var(--wm);font-size:14px;margin-bottom:22px'>Finalisez l'envoi dans WhatsApp, nous vous confirmons rapidement la livraison.</p><button class='btn-g' onclick='sp("home")'>Retour à l'accueil</button></div></div></div>
 
 <div class="pg" id="pg-cart">
   <div class="cpg"><h2 class="ctitle">Votre panier</h2><div id="cartEl"></div></div>
@@ -579,7 +591,7 @@ const T=s=>s;
 const POP=[1,2,4,8,5,10];
 function cardHtml(p){
   const d=inCart(p.id);
-  return `<div class="pc" onclick="om(${p.id})"><div class="pc-img"><img src="${T(p.imgs[0])}" alt="${p.name}" loading="lazy" decoding="async">${p.badge?`<span class="pbadge">${p.badge}</span>`:''}</div><div class="pb"><div class="pt">${p.type}</div><div class="pn">${p.name}</div><div class="pp">${p.price.toLocaleString('fr-FR')} FCFA</div><button class="padd ${d?'done':''}" onclick="event.stopPropagation();qAdd(${p.id},this)">${d?'<i class="ti ti-check"></i> Ajouté':'+ Ajouter au panier'}</button></div></div>`;
+  return `<div class="pc" onclick="om(${p.id})"><div class="pc-img"><img src="${T(p.imgs[0])}" alt="${p.name}" loading="lazy" decoding="async">${p.badge?`<span class="pbadge">${p.badge}</span>`:''}</div><div class="pb"><div class="pt">${p.type}</div><div class="pn">${p.name}</div><div class="pp">${p.price.toLocaleString('fr-FR')} FCFA</div><button class="padd buy" onclick="event.stopPropagation();buyNow(${p.id})">Acheter</button></div></div>`;
 }
 function rProds(cat){
   const list=cat==='all'?PRODS:PRODS.filter(p=>p.cat===cat);
@@ -634,8 +646,8 @@ function renderModal(){
           <button class="qbtn" onclick="chQ(1)">+</button>
         </div>
       </div>
-      <button class="madd" onclick="addM()"><i class="ti ti-shopping-bag"></i> Ajouter au panier</button>
-      <button class="mwa" onclick="waOrder()"><i class="ti ti-brand-whatsapp"></i> Commander directement via WhatsApp</button>
+      <div class="mbtns"><button class="mbuy" onclick="buyNow()"><i class="ti ti-bolt"></i> Acheter maintenant</button><button class="madd" onclick="addM()"><i class="ti ti-shopping-bag"></i> Panier</button></div>
+      <button class="mwa" onclick="shareProd()"><i class="ti ti-link"></i> Copier le lien du produit</button>
     </div>`;
 }
 function setTrack(px,anim){
@@ -766,7 +778,7 @@ function rCart(){
       <div class="srow"><span>Livraison</span><span style="color:var(--g);">Gratuite ✓</span></div>
       <div class="srow"><span>Paiement</span><span style="color:var(--g);">À la réception ✓</span></div>
       <div class="stot"><span>Total</span><span>${sub.toLocaleString('fr-FR')} FCFA</span></div>
-      <button class="ckout" onclick="chkout()"><i class="ti ti-brand-whatsapp"></i> Commander via WhatsApp</button>
+      <button class="ckout" onclick="chkout()"><i class="ti ti-arrow-right"></i> Passer la commande</button>
     </div>`;
 }
 function uQ(idx,d){
@@ -794,7 +806,16 @@ function toast(msg){
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
-rHome();
+let order=[],fromCart=false;const PAGES={accueil:'home',panier:'cart',contact:'cnt',commande:'order'},HASH={home:'accueil',cart:'panier',cnt:'contact',order:'commande'};function showPage(n,keep){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));document.getElementById('pg-'+n).classList.add('on');const m={home:0,cnt:2};document.querySelectorAll('.ntab').forEach((t,i)=>t.classList.toggle('on',m[n]===i));if(n==='cart')rCart();if(n==='order')rOrder();if(!keep)window.scrollTo(0,0);}function go(h){if(location.hash==='#'+h)route();else location.hash=h;}function sp(n){if(n==='shop'){go('accueil');setTimeout(()=>document.getElementById('produits').scrollIntoView({behavior:'smooth'}),80);return;}go(HASH[n]||'accueil');}function goShop(){sp('shop');}function route(){const h=location.hash.slice(1),m=h.match(/^produit-(\d+)$/);if(m&&PRODS.some(p=>p.id==m[1])){if(!document.getElementById('mov').classList.contains('open')||!curP||curP.id!=m[1])openModal(+m[1]);return;}closeModal();const t=PAGES[h]||'home',cur=document.querySelector('.pg.on');showPage(t,!!cur&&cur.id==='pg-'+t);}window.addEventListener('hashchange',route);function openModal(id){curP=PRODS.find(x=>x.id===id);curQ=1;curImgIdx=0;curOpts={};curP.opts.forEach(o=>{curOpts[curP.id+'_'+o.key]=o.choices[0].v;});renderModal();document.getElementById('mov').classList.add('open');document.body.style.overflow='hidden';}function closeModal(){document.getElementById('mov').classList.remove('open');document.body.style.overflow='';}function om(id){location.hash='produit-'+id;}function cmClose(e){if(e===null||e.target===document.getElementById('mov')){if(location.hash.indexOf('#produit-')===0)location.hash='accueil';else closeModal();}}function fillOpts(id,o){const p=PRODS.find(x=>x.id===id),r={};p.opts.forEach(x=>{r[x.key]=(o&&o[x.key])||x.choices[0].v;});return r;}function unit(it){const p=PRODS.find(x=>x.id===it.id);let px=p.price;p.opts.forEach(o=>{const c=o.choices.find(c=>c.v===it.opts[o.key]);if(c)px+=c.p;});return Math.max(px,0);}function buyNow(id){const p=id?PRODS.find(x=>x.id===id):curP,o={};if(!id)Object.entries(curOpts).forEach(([k,v])=>{o[k.split('_').slice(1).join('_')]=v;});order=[{id:p.id,qty:id?1:curQ,opts:fillOpts(p.id,o)}];fromCart=false;go('commande');}function chkout(){order=cart.map(i=>({id:i.id,qty:i.qty,opts:fillOpts(i.id,i.opts)}));fromCart=true;go('commande');}function oOpt(i,k,v){const p=PRODS.find(x=>x.id===order[i].id);order[i].opts[p.opts[k].key]=v;rOrder();}function oQty(i,d){order[i].qty+=d;if(order[i].qty<1)order.splice(i,1);rOrder();}function rOrder(){const el=document.getElementById('ordItems'),f=document.getElementById('ordForm');document.getElementById('ordDone').style.display='none';el.style.display='';if(!order.length&&cart.length){order=cart.map(i=>({id:i.id,qty:i.qty,opts:fillOpts(i.id,i.opts)}));fromCart=true;}if(!order.length){f.style.display='none';el.innerHTML=`<div class='cempty'><i class='ti ti-shopping-bag'></i><p>Aucun article à commander.</p><button class='btn-g' onclick='goShop()'>Voir les produits</button></div>`;return;}f.style.display='';const tot=order.reduce((s,it)=>s+unit(it)*it.qty,0);el.innerHTML=order.map((it,i)=>{const p=PRODS.find(x=>x.id===it.id);return `<div class='ci'><div class='ci-img'><img src='${T(p.imgs[0])}' alt=''></div><div class='ci-info'><div class='ci-name'>${p.name}</div>${p.opts.map((o,k)=>`<select class='osel' style='margin:6px 0 0;padding:7px 10px' onchange='oOpt(${i},${k},this.value)'>${o.choices.map(c=>`<option value='${c.v}'${it.opts[o.key]===c.v?' selected':''}>${o.lbl} : ${c.v}${c.p?' ('+(c.p>0?'+':'')+c.p.toLocaleString('fr-FR')+' FCFA)':''}</option>`).join('')}</select>`).join('')}<div class='ci-qty'><button class='cqb' onclick='oQty(${i},-1)'>−</button><span class='cqn'>${it.qty}</span><button class='cqb' onclick='oQty(${i},1)'>+</button></div></div><div class='ci-total'>${(unit(it)*it.qty).toLocaleString('fr-FR')} FCFA</div></div>`;}).join('')+`<div class='csumm'><div class='srow'><span>Livraison</span><span style='color:var(--g)'>Gratuite ✓</span></div><div class='srow'><span>Paiement</span><span style='color:var(--g)'>À la réception ✓</span></div><div class='stot'><span>Total</span><span>${tot.toLocaleString('fr-FR')} FCFA</span></div></div>`;}function confirmOrder(){const v=id=>document.getElementById(id).value.trim(),name=v('o-name'),tel=v('o-tel'),city=v('o-city'),addr=v('o-addr'),note=v('o-note');if(!name||!tel||!city){toast('Remplissez nom, téléphone et ville');return;}const NL=String.fromCharCode(10),tot=order.reduce((s,it)=>s+unit(it)*it.qty,0),lines=order.map(it=>{const p=PRODS.find(x=>x.id===it.id),o=Object.values(it.opts).join(', ');return '• '+it.qty+'x '+p.name+(o?' ('+o+')':'')+' — '+(unit(it)*it.qty).toLocaleString('fr-FR')+' FCFA';});const msg=['Bonjour Mac Store 👋','','NOUVELLE COMMANDE',...lines,'','Total : '+tot.toLocaleString('fr-FR')+' FCFA (livraison gratuite)','Paiement : à la réception','','Client : '+name,'Téléphone : '+tel,'Ville / quartier : '+city,'Adresse : '+(addr||'-')].concat(note?['Note : '+note]:[]).concat(['','Merci !']).join(NL);window.open('https://wa.me/221776757931?text='+encodeURIComponent(msg),'_blank');if(fromCart){cart=[];updCC();}order=[];document.getElementById('ordItems').style.display='none';document.getElementById('ordForm').style.display='none';document.getElementById('ordDone').style.display='';window.scrollTo(0,0);}function shareProd(){const u=location.href.split('#')[0]+'#produit-'+curP.id;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('Lien du produit copié ✓')).catch(()=>{window.prompt('Lien du produit :',u);});}
+rHome();route();
+(function(){
+  const hc=document.querySelector('.hero-c');if(!hc)return;
+  const el=document.createElement('div');el.className='live';
+  el.innerHTML='<span class="live-dot"></span><span><b id="liveN">12</b> personnes consultent la boutique</span>';
+  hc.appendChild(el);
+  let n=12;
+  setInterval(()=>{n=Math.max(7,Math.min(24,n+Math.floor(Math.random()*5)-2));document.getElementById('liveN').textContent=n;},4000);
+})();
 </script>
 </body>
 </html>
